@@ -8,5 +8,10 @@ Set Margin 20
 Set MarginFill "#674EFF"
 Set BorderRadius 10
 
+Type "./wait-for -h"
+
+sleep 2s
+
 Type "./wait-for -u https://google.com/ -p google.com:443 -u 323:https://google.com -i 1s -t 2s"
 
+sleep 6s
