@@ -1,0 +1,32 @@
+name: vhs
+on:
+  push:
+    paths: [ "*.tape", ".github/workflows/vhs.yaml" ]
+    branches-ignore: [ "main" ]
+    tags-ignore: [ "*" ]
+  workflow_dispatch:
+jobs:
+  vhs:
+    runs-on: ubuntu-latest
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21.x'
+      - name: Build
+        run: go build -o wait-for .
+      - uses: charmbracelet/vhs-action@v2
+        with:
+          path: 'demo.tape'
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          file_pattern: '*.gif'
+          commit_message: Update generated VHS GIF 📼
+          commit_user_name: vhs-action 📼
+          commit_user_email: actions@github.com
+          commit_author: vhs-action 📼 <actions@github.com>

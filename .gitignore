@@ -1,0 +1,17 @@
+# Binaries, plugins, libs
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Logs
+*.log
+
+# Go
+*.o
+*.a
+*.cgo*
+
+# The binary build output
+/wait-for
