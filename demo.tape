@@ -10,10 +10,7 @@ Set BorderRadius 10
 
 Type "./wait-for -h"
 Enter
-
 Sleep 2s
-
 Type "./wait-for -u https://google.com/ -p google.com:443 -u 323:https://google.com -i 1s -t 2s"
 Enter
-
 Sleep 6s
