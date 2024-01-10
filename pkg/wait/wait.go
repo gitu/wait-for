@@ -43,13 +43,13 @@ func (w *Wait) Wait() error {
 
 	fmt.Printf("Waiting for %d targets\n", len(checkers))
 	for _, c := range checkers {
-		fmt.Printf("👀 %s\n", c.Name())
+		fmt.Printf("👀  %s\n", c.Name())
 	}
 	fmt.Println("####################")
 
 	wg := sync.WaitGroup{}
-	wg.Add(len(checkers) + 1)
-	go statusLogger(ctx, &wg, w.StatusInterval, checkers)
+	go statusLogger(ctx, w.StatusInterval, checkers)
+	wg.Add(len(checkers))
 	for _, c := range checkers {
 		go c.Start(ctx, &wg)
 	}
@@ -66,9 +66,9 @@ func (w *Wait) Wait() error {
 	fmt.Printf("Finished waiting for %d targets\n", len(checkers))
 	for _, c := range checkers {
 		if c.LastStatus.Healthy {
-			fmt.Printf("😃 %s -- %v\n", c.LastStatus.Target, c.Duration)
+			fmt.Printf("✔️  %s -- %v\n", c.LastStatus.Target, c.Duration)
 		} else {
-			fmt.Printf("🤕 %s -- %v -- ERROR: %v\n", c.LastStatus.Target, c.Duration, c.LastStatus.Error)
+			fmt.Printf("❌  %s -- %v -- ERROR: %v\n", c.LastStatus.Target, c.Duration, c.LastStatus.Error)
 		}
 	}
 	fmt.Println("####################")
@@ -88,8 +88,7 @@ func newWrappedChecker(c Checker, interval time.Duration) *WrappedChecker {
 	}
 }
 
-func statusLogger(ctx context.Context, s *sync.WaitGroup, interval time.Duration, i []*WrappedChecker) {
-	defer s.Done()
+func statusLogger(ctx context.Context, interval time.Duration, i []*WrappedChecker) {
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 	for {
@@ -100,9 +99,9 @@ func statusLogger(ctx context.Context, s *sync.WaitGroup, interval time.Duration
 			fmt.Printf("Status: %v\n", time.Now().Format(time.DateTime))
 			for _, c := range i {
 				if c.LastStatus.Healthy {
-					fmt.Printf("😃 %s -- %v\n", c.LastStatus.Target, c.Duration)
+					fmt.Printf("✔️  %s -- %v\n", c.LastStatus.Target, c.Duration)
 				} else {
-					fmt.Printf("🤕 %s -- %v -- ERROR: %v\n", c.LastStatus.Target, c.Duration, c.LastStatus.Error)
+					fmt.Printf("❌  %s -- %v -- ERROR: %v\n", c.LastStatus.Target, c.Duration, c.LastStatus.Error)
 				}
 			}
 		}
