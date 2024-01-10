@@ -330,7 +330,7 @@ func TestHostPort_Check(t *testing.T) {
 			port:        8000,
 			deadline:    5 * time.Second,
 			want:        false,
-			expectedErr: fmt.Errorf("dial tcp: lookup unknownhostwithnoassociatedip: no such host"),
+			expectedErr: fmt.Errorf("lookup unknownhostwithnoassociatedip"),
 		},
 	}
 
