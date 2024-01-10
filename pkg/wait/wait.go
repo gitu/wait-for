@@ -32,10 +32,10 @@ func (w *Wait) Wait() error {
 
 	checkers := make([]*WrappedChecker, 0, len(hostPorts)+len(urlStatuses))
 	for _, hp := range hostPorts {
-		checkers = append(checkers, newWrappedChecker(&hp, w.CheckInterval))
+		checkers = append(checkers, newWrappedChecker(hp, w.CheckInterval))
 	}
 	for _, u := range urlStatuses {
-		checkers = append(checkers, newWrappedChecker(&u, w.CheckInterval))
+		checkers = append(checkers, newWrappedChecker(u, w.CheckInterval))
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), w.GlobalTimeout)
@@ -148,8 +148,8 @@ func (w *WrappedChecker) Start(ctx context.Context, group *sync.WaitGroup) {
 	}
 }
 
-func parseHostPorts(ports []string) ([]hostPort, error) {
-	var hostPorts []hostPort
+func parseHostPorts(ports []string) ([]*hostPort, error) {
+	var hostPorts []*hostPort
 	for _, p := range ports {
 		host, port, err := net.SplitHostPort(p)
 		if err != nil {
@@ -159,7 +159,7 @@ func parseHostPorts(ports []string) ([]hostPort, error) {
 		if err != nil {
 			return nil, fmt.Errorf("invalid port %s (%v)", port, err)
 		}
-		hostPorts = append(hostPorts, hostPort{host: host, port: portnum})
+		hostPorts = append(hostPorts, &hostPort{host: host, port: portnum})
 	}
 	return hostPorts, nil
 }
@@ -180,14 +180,14 @@ type urlStatus struct {
 	status int
 }
 
-func newUrlStatus(urls []string) ([]urlStatus, error) {
+func newUrlStatus(urls []string) ([]*urlStatus, error) {
 	urlStatuses, err := parseUrls(urls)
 	if err != nil {
 		return nil, err
 	}
-	var result []urlStatus
+	var result []*urlStatus
 	for u, s := range urlStatuses {
-		result = append(result, urlStatus{url: u, status: s})
+		result = append(result, &urlStatus{url: u, status: s})
 	}
 	return result, nil
 }
