@@ -19,13 +19,13 @@ func TestParseHostPorts(t *testing.T) {
 	testCases := []struct {
 		name   string
 		input  []string
-		output []hostPort
+		output []*hostPort
 		hasErr bool
 	}{
 		{
 			name:   "ValidPorts",
 			input:  []string{"127.0.0.1:8080", "192.168.1.10:443"},
-			output: []hostPort{{"127.0.0.1", 8080}, {"192.168.1.10", 443}},
+			output: []*hostPort{{"127.0.0.1", 8080}, {"192.168.1.10", 443}},
 			hasErr: false,
 		},
 		{
@@ -36,7 +36,7 @@ func TestParseHostPorts(t *testing.T) {
 		{
 			name:   "EmptyInput",
 			input:  []string{},
-			output: []hostPort{},
+			output: []*hostPort{},
 			hasErr: false,
 		},
 	}
@@ -55,7 +55,7 @@ func TestParseHostPorts(t *testing.T) {
 	}
 }
 
-func compare(a, b []hostPort) bool {
+func compare(a, b []*hostPort) bool {
 	if len(a) != len(b) {
 		return false
 	}
