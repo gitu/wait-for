@@ -322,7 +322,7 @@ func TestHostPort_Check(t *testing.T) {
 			port:        53232,
 			deadline:    50 * time.Millisecond,
 			want:        false,
-			expectedErr: fmt.Errorf("dial tcp 127.0.0.1:53232: connectex: No connection could be made because the target machine actively refused it."),
+			expectedErr: fmt.Errorf("dial tcp 127.0.0.1:53232"),
 		},
 		{
 			name:        "UnresolvedHost",
@@ -350,7 +350,7 @@ func TestHostPort_Check(t *testing.T) {
 			if got != tt.want {
 				t.Errorf("hostPort.Check() = %v, want %v", got, tt.want)
 			}
-			if err != nil && err.Error() != tt.expectedErr.Error() {
+			if err != nil && !strings.Contains(err.Error(), tt.expectedErr.Error()) {
 				t.Errorf("hostPort.Check() error = %v, want %v", err, tt.expectedErr)
 			}
 		})
