@@ -17,7 +17,7 @@ jobs:
         run: go build -v ./...
       - run: go install github.com/jstemmer/go-junit-report/v2@latest
       - name: Test with the Go CLI
-        run: go test -v 2>&1 ./... | go-junit-report -set-exit-code > report.xml
+        run: go test -v 2>&1 ./... | $HOME/go/bin/go-junit-report -set-exit-code > report.xml
       - name: Test Summary
         uses: test-summary/action@v2
         with:
