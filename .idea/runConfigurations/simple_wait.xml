@@ -2,7 +2,7 @@
   <configuration default="false" name="simple wait" type="GoApplicationRunConfiguration" factoryName="Go Application">
     <module name="wait-for" />
     <working_directory value="$PROJECT_DIR$" />
-    <parameters value="-p doesnotexist:123 -u https://google.ch" />
+    <parameters value="-p doesnotexist:123 -u https://google.ch -u http://doesnotexist2" />
     <kind value="PACKAGE" />
     <package value="github.com/gitu/wait-for" />
     <directory value="$PROJECT_DIR$" />

@@ -18,6 +18,7 @@ type Wait struct {
 	StatusInterval time.Duration
 	CheckInterval  time.Duration
 	GlobalTimeout  time.Duration
+	CheckTimeout   time.Duration
 }
 
 func (w *Wait) Wait() error {
@@ -32,10 +33,10 @@ func (w *Wait) Wait() error {
 
 	checkers := make([]*WrappedChecker, 0, len(hostPorts)+len(urlStatuses))
 	for _, hp := range hostPorts {
-		checkers = append(checkers, newWrappedChecker(hp, w.CheckInterval))
+		checkers = append(checkers, newWrappedChecker(hp, w.CheckInterval, w.CheckTimeout))
 	}
 	for _, u := range urlStatuses {
-		checkers = append(checkers, newWrappedChecker(u, w.CheckInterval))
+		checkers = append(checkers, newWrappedChecker(u, w.CheckInterval, w.CheckTimeout))
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), w.GlobalTimeout)
@@ -80,11 +81,12 @@ func (w *Wait) Wait() error {
 	return nil
 }
 
-func newWrappedChecker(c Checker, interval time.Duration) *WrappedChecker {
+func newWrappedChecker(c Checker, interval time.Duration, timeout time.Duration) *WrappedChecker {
 	return &WrappedChecker{
 		Checker:       c,
 		CheckInterval: interval,
 		LastStatus:    &StatusInfo{Target: c.Name(), Healthy: false, Error: nil},
+		Timeout:       timeout,
 	}
 }
 
@@ -101,7 +103,7 @@ func statusLogger(ctx context.Context, interval time.Duration, i []*WrappedCheck
 				if c.LastStatus.Healthy {
 					fmt.Printf("✔️  %s -- %v\n", c.LastStatus.Target, c.Duration)
 				} else {
-					fmt.Printf("❌  %s -- %v -- ERROR: %v\n", c.LastStatus.Target, c.Duration, c.LastStatus.Error)
+					fmt.Printf("⚠️  %s -- %v -- ERROR: %v\n", c.LastStatus.Target, c.Duration, c.LastStatus.Error)
 				}
 			}
 		}
@@ -113,6 +115,7 @@ type WrappedChecker struct {
 	CheckInterval time.Duration
 	LastStatus    *StatusInfo
 	Duration      time.Duration
+	Timeout       time.Duration
 }
 
 func (w *WrappedChecker) Start(ctx context.Context, group *sync.WaitGroup) {
@@ -132,7 +135,9 @@ func (w *WrappedChecker) Start(ctx context.Context, group *sync.WaitGroup) {
 			w.Duration = time.Since(start)
 			return
 		default:
+			ctx, cancel := context.WithTimeout(ctx, w.Timeout)
 			ok, err := w.Check(ctx)
+			cancel()
 			w.Duration = time.Since(start)
 			if err != nil {
 				w.LastStatus.Error = err

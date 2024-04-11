@@ -36,6 +36,7 @@ func init() {
 	rootCmd.Flags().StringSliceVarP(&w.Urls, "url", "u", []string{}, "urls to wait for (http://host:port/path) can be prefixed with expected "+
 		"status code (e.g. 201:http://host/path) uses 200 as default")
 	rootCmd.Flags().DurationVarP(&w.GlobalTimeout, "timeout", "t", 30*time.Second, "global timeout for all urls")
+	rootCmd.Flags().DurationVarP(&w.CheckTimeout, "checkTimeout", "e", 1*time.Second, "individual check timeout for each individual check")
 	rootCmd.Flags().DurationVarP(&w.StatusInterval, "statusInterval", "i", 10*time.Second, "interval to current status of urls")
 	rootCmd.Flags().DurationVarP(&w.CheckInterval, "checkInterval", "c", 500*time.Millisecond, "interval to wait between checks")
 	rootCmd.MarkFlagsOneRequired("host-port", "url")
