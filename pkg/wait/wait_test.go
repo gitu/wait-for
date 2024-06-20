@@ -356,3 +356,44 @@ func TestHostPort_Check(t *testing.T) {
 		})
 	}
 }
+
+func Test_parseUrls(t *testing.T) {
+	tests := []struct {
+		name    string
+		args    []string
+		want    map[string]int
+		wantErr bool
+	}{
+		{
+			name:    "ValidPorts",
+			args:    []string{"300:http://google.com/"},
+			want:    map[string]int{"http://google.com/": 300},
+			wantErr: false,
+		},
+		{
+			name:    "InvalidPort",
+			args:    []string{"abcd:http://google.com/"},
+			want:    map[string]int{"abcd:http://google.com/": 200},
+			wantErr: false,
+		},
+		{
+			name:    "UrlWithNumberAtEnd",
+			args:    []string{"http://google300:300"},
+			want:    map[string]int{"http://google300:300": 200},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := parseUrls(tt.args)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("parseUrls() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("parseUrls() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
