@@ -238,7 +238,7 @@ func (h *hostPort) Check(ctx context.Context) (bool, error) {
 }
 
 func parseUrls(urls []string) (map[string]int, error) {
-	hasStatusCode := regexp.MustCompile(`(\d{3}):(.*)`)
+	hasStatusCode := regexp.MustCompile(`^(\d{3}):(https?://.*)$`)
 	urlStatuses := make(map[string]int)
 	for _, u := range urls {
 		if hasStatusCode.MatchString(u) {
