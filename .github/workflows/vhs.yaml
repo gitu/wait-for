@@ -23,7 +23,7 @@ jobs:
       - uses: charmbracelet/vhs-action@v2
         with:
           path: 'demo.tape'
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      - uses: stefanzweifel/git-auto-commit-action@v6
         with:
           file_pattern: '*.gif'
           commit_message: Update generated VHS GIF 📼
