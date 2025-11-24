@@ -13,16 +13,19 @@ jobs:
       # added or changed files to the repository.
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
-          go-version: '1.22.x'
+          go-version: '1.25.x'
       - name: Build
         run: go build -o wait-for .
-      - uses: charmbracelet/vhs-action@v2
-        with:
-          path: 'demo.tape'
+      - name: 🧪 Generate the gif with vhs
+        run: |
+          sudo apt update
+          sudo apt install -y ffmpeg ttyd
+          go install github.com/charmbracelet/vhs@latest
+          vhs demo.tape
       - uses: stefanzweifel/git-auto-commit-action@v5
         with:
           file_pattern: '*.gif'
